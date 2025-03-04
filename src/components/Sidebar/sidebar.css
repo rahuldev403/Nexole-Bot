@@ -1,0 +1,11 @@
+.recent::-webkit-scrollbar-thumb {
+  background-color: #82818164;
+  border-radius: 10px;
+  height: 10px;
+}
+.recent::-webkit-scrollbar{
+  width: 0px;
+}
+.recent::-webkit-scrollbar-track {
+  background: transparent;
+}
