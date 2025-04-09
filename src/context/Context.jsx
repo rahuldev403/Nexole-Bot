@@ -11,7 +11,8 @@ const ContextProvider = ({ children }) => {
   const [loading, setLoading] = useState(false);
   const [result, setResult] = useState([]);
   const [imageBase64, setImageBase64] = useState(null);
-
+  const [userPrompt, setUserPrompt] = useState("");
+  const [darkMode, setDarkMode] = useState(false);
   const newChat = () => {
     setLoading(false);
     setResponse(false);
@@ -75,9 +76,11 @@ const ContextProvider = ({ children }) => {
         const formattedResponse = responseArray.map((part, index) =>
           index % 2 === 1 ? (
             <span key={index}>
-              <br />
-              <b className="text-gray-700">{part}</b>
-              <br />
+              <div>
+                <br />
+                <b className="text-green-500">{part}</b>
+                <br />
+              </div>
             </span>
           ) : (
             part
@@ -93,16 +96,16 @@ const ContextProvider = ({ children }) => {
 
         showTypingEffect(formattedResponse);
       } catch (error) {
-        console.error("Error fetching response:", error);
+        
         setResult(["An error occurred. Please try again."]);
       } finally {
         setLoading(false);
         setInput("");
-        setImageBase64(null); 
+        setImageBase64(null);
       }
     },
     [input, imageBase64]
-  ); 
+  );
 
   const contextValue = {
     input,
@@ -119,8 +122,12 @@ const ContextProvider = ({ children }) => {
     setResult,
     onSent,
     newChat,
-    imageBase64, 
+    imageBase64,
     setImageBase64,
+    userPrompt,
+    setUserPrompt,
+    darkMode,
+    setDarkMode,
   };
 
   return <Context.Provider value={contextValue}>{children}</Context.Provider>;

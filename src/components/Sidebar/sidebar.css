@@ -1,11 +1,31 @@
+.recent {
+  overflow-y: auto; /* Ensure scroll is enabled */
+}
+
+/* Customize the scrollbar thumb */
 .recent::-webkit-scrollbar-thumb {
   background-color: #82818164;
   border-radius: 10px;
   height: 10px;
+  transition: background-color 0.3s ease;
 }
-.recent::-webkit-scrollbar{
+
+/* Hide the scrollbar by default */
+.recent::-webkit-scrollbar {
   width: 0px;
 }
+
+/* Transparent track */
 .recent::-webkit-scrollbar-track {
   background: transparent;
+}
+
+/* Make the scrollbar visible when hovered */
+.recent:hover::-webkit-scrollbar {
+  width: 8px;
+}
+
+/* Change thumb color when hovering */
+.recent:hover::-webkit-scrollbar-thumb {
+  background-color: #828181;
 }

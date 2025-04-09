@@ -12,6 +12,7 @@
   "dependencies": {
     "@google/generative-ai": "^0.21.0",
     "@gsap/react": "^2.1.1",
+    "@lottiefiles/dotlottie-react": "^0.13.3",
     "@react-three/fiber": "^8.17.14",
     "framer-motion": "^12.4.1",
     "gsap": "^3.12.5",

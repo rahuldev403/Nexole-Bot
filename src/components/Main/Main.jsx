@@ -5,9 +5,18 @@ import { useContext, useRef, useEffect, useState } from "react";
 import { Context } from "../../context/Context";
 import { motion } from "framer-motion";
 import "./Main.css";
+import Load from "../../Load";
 
 const Main = ({ showSidebar, setOpenSidebar }) => {
-  const { response, loading, result, onSent, input } = useContext(Context);
+  const {
+    response,
+    loading,
+    result,
+    onSent,
+    userPrompt,
+    darkMode,
+    setDarkMode,
+  } = useContext(Context);
 
   const resultContainerRef = useRef(null);
   const [userScrolled, setUserScrolled] = useState(false);
@@ -29,19 +38,18 @@ const Main = ({ showSidebar, setOpenSidebar }) => {
     }
   };
 
+  const toggleTheme = () => {
+    setDarkMode(!darkMode);
+  };
+
   return (
     <div
-      className={`bg-gray-400 p-6 h-full transition-all duration-300 flex-1 ${
+      className={`${
+        darkMode ? "bg-gray-700 text-gray-300" : "bg-gray-300 text-gray-800"
+      } p-6 h-full transition-all duration-300 flex-1 ${
         showSidebar ? "ml-66" : "ml-1"
       }`}
-      style={{
-        backgroundImage: `url(${assets.nexole})`,
-        backgroundPosition: "center",
-        backgroundSize: "cover",
-        backgroundRepeat: "no-repeat",
-      }}
     >
-      <div className="absolute inset-0 bg-black/30 backdrop-blur-md h-[vh]"></div>
       <div className="relative z-10">
         <div className="nav w-full flex justify-between items-center">
           <img src={assets.nexole} alt="" className="w-[70px]" />
@@ -50,13 +58,28 @@ const Main = ({ showSidebar, setOpenSidebar }) => {
             alt="User Icon"
             className="w-8 h-8 rounded-full"
           />
+
+          <button
+            onClick={toggleTheme}
+            className="text-xl p-2 rounded-full transition-all duration-300"
+          >
+            {darkMode ? (
+              <span role="img" aria-label="moon">
+                🌙
+              </span> // Moon icon for dark mode
+            ) : (
+              <span role="img" aria-label="sun">
+                🌞
+              </span> // Sun icon for light mode
+            )}
+          </button>
         </div>
         <div className="mainContainer flex flex-col items-center">
           {!response ? (
             <>
               <div className="greet mt-10">
                 <div className="md:text-[3em] font-bold text-gray-200 flex items-center gap-4">
-                  <span className="font-bold bg-gradient-to-r from-[#7bfa31] to-[#e4e6e3] bg-clip-text text-transparent">
+                  <span className="font-bold bg-gradient-to-r from-[#79f034] to-[#515151] bg-clip-text text-transparent">
                     Nexole-Bot Welcomes you -
                   </span>
                   <span>
@@ -74,14 +97,18 @@ const Main = ({ showSidebar, setOpenSidebar }) => {
                     />
                   </span>
                 </div>
-                <p className="text-gray-800 hidden md:block">
+                <p
+                  className={`${
+                    darkMode
+                      ? "text-gray-200 hidden md:block"
+                      : "text-gray-800 hidden md:block"
+                  }`}
+                >
                   Nexole-Bot may display inaccurate info, including about
                   people, so double-check its responses. Your privacy and Nexole
                   Apps
                 </p>
-                <p className="que text-gray-200">
-                  You may have a General query
-                </p>
+                <p className="que text-gray-500">How can i help you with ? </p>
               </div>
               <div className="cards grid md:grid-cols-4 gap-4 mt-6 grid-cols-2">
                 <Card
@@ -108,7 +135,7 @@ const Main = ({ showSidebar, setOpenSidebar }) => {
             </>
           ) : (
             <div
-              className="result p-3 overflow-y-auto rounded-2xl bg-[#dedcdc29] mt-5 h-[60vh] w-[95%] backdrop-filter backdrop-blur-lg shadow-lg"
+              className="result p-3 overflow-y-auto rounded-2xl bg-[#dedcdc29] mt-5 h-[60vh] w-[95%] backdrop-filter backdrop-blur-lg shadow-lg transition-all duration-300"
               ref={resultContainerRef}
               onScroll={handleScroll}
               style={{ scrollBehavior: "smooth", willChange: "transform" }}
@@ -119,47 +146,27 @@ const Main = ({ showSidebar, setOpenSidebar }) => {
                   alt=""
                   className="rounded-full w-[2em]"
                 />
-                <p className="text-gray-900">
-                  {input ? input : "Default Prompt"}
-                </p>
+                <p>{userPrompt ? userPrompt : "Default Prompt"}</p>
               </div>
-              <div className="result-data mt-4 flex-col items-start gap-4">
-                <div className="flex items-center gap-4">
-                  {loading ? (
-                    <motion.img
-                      src={assets.robo1}
-                      alt=""
-                      className="w-[2em] rounded-full"
-                      animate={{ y: [0, -10, 0] }}
-                      transition={{
-                        duration: 2,
-                        repeat: Infinity,
-                        repeatType: "reverse",
-                        ease: "easeInOut",
-                      }}
-                    />
-                  ) : (
-                    <img
-                      src={assets.robo1}
-                      alt=""
-                      className="w-[2em] rounded-full"
-                    />
-                  )}
-                  {loading ? (
-                    <img src={assets.loading} alt="" className="w-9" />
-                  ) : null}
-                </div>
+              <div className="result-data mt-4 flex items-start gap-4">
+                <img
+                  src={assets.robo1}
+                  alt="Bot Icon"
+                  className={`w-[2em] rounded-full ${
+                    loading ? "animate-[bounce_2s_infinite]" : ""
+                  }`}
+                />
                 {loading ? (
-                  <div className="text-gray-900 w-full loader">
-                    Loading...
-                    <hr className="bg-gradient-to-r from-[#5dfa5d] via-white to-[#5dfa5d] rounded-sm border-none bg-[#f6f7f8]" />
-                    <hr className="bg-gradient-to-r from-[#5dfa5d] via-white to-[#5dfa5d] rounded-sm border-none bg-[#f6f7f8]" />
-                    <hr className="bg-gradient-to-r from-[#5dfa5d] via-white to-[#5dfa5d] rounded-sm border-none bg-[#f6f7f8]" />
-                  </div>
+                  <Load />
                 ) : (
-                  <p className="text-gray-900 text-sm leading-[1.5em]">
+                  <motion.p
+                    className=" text-sm leading-[1.5em]"
+                    initial={{ opacity: 0 }}
+                    animate={{ opacity: 1 }}
+                    transition={{ duration: 1 }}
+                  >
                     {result}
-                  </p>
+                  </motion.p>
                 )}
               </div>
             </div>

@@ -1,7 +1,8 @@
-import { useContext,useState } from "react";
+import { useContext, useState } from "react";
 import { assets } from "../../assets/assets";
 import { Context } from "../../context/Context";
 import styled, { keyframes } from "styled-components";
+import "./sidebar.css";
 
 const slideUp = keyframes`
   from {
@@ -9,32 +10,35 @@ const slideUp = keyframes`
     opacity: 0;
   }
   to {
-    transform: translateY(-50%); 
+    transform: translateY(0); 
     opacity: 1;
   }
 `;
+
 const MessageBlock = styled.div`
   position: fixed;
-  bottom: 0; // Start at the bottom
+  bottom: 30px;
   left: 50%;
-  transform: translateX(-50%) translateY(100%); 
-  background-color: rgba(0, 0, 0, 0.7); 
+  transform: translateX(-50%);
+  background-color: rgba(0, 0, 0, 0.85);
   color: white;
-  padding: 1rem;
-  border-radius: 8px;
-  z-index: 1000; // Ensure it's on top
-  animation: ${slideUp} 0.5s ease-in-out forwards; 
+  padding: 0.75rem 1.25rem;
+  border-radius: 0.5rem;
+  z-index: 1000;
+  animation: ${slideUp} 0.4s ease-out forwards;
 `;
 
-import "./sidebar.css";
-
 const Sidebar = ({ showSidebar, setShowSidebar }) => {
-  const { onSent, prevPrompts, setRecentPrompt, newChat } = useContext(Context);
+  const { onSent, prevPrompts, setRecentPrompt, newChat, setUserPrompt } =
+    useContext(Context);
   const [msg, setMsg] = useState(false);
+
   const loadPrompt = async (prompt) => {
     setRecentPrompt(prompt);
+    setUserPrompt(prompt);
     await onSent(prompt);
   };
+
   const handleMsg = () => {
     setMsg(true);
     setTimeout(() => setMsg(false), 3000);
@@ -42,53 +46,71 @@ const Sidebar = ({ showSidebar, setShowSidebar }) => {
 
   return (
     <div
-      className={`h-full hidden md:block  bg-gray-300 p-3 relative z-10 transition-all duration-300 flex flex-col justify-center align-center ${
+      className={`transition-all duration-300 ease-in-out h-full hidden md:flex flex-col justify-between bg-gray-200 p-3 relative z-20 shadow-md ${
         showSidebar ? "w-60" : "w-20"
       }`}
     >
-      <div className="top rounded-2xl bg-gray-200 p-2 h-[60vh] backdrop-filter backdrop-blur-lg">
-        <div
-          className=" flex justify-center rounded-2xl"
-          onClick={() => setShowSidebar(!showSidebar)}
-        >
-          <img src={assets.menu_icon} alt="" className="w-7 cursor-pointer" />
+      {/* Top */}
+      <div className="flex flex-col h-[75vh] overflow-hidden">
+        {/* Toggle Button */}
+        <div className="flex justify-center">
+          <img
+            src={assets.menu_icon}
+            alt="Toggle"
+            className="w-6 cursor-pointer"
+            onClick={() => setShowSidebar(!showSidebar)}
+          />
         </div>
+
+        {/* New Chat */}
         <div
-          className="new-chat flex items-center justify-center bg-white p-2 cursor-pointer mt-7 rounded-3xl  hover:bg-gray-100"
-          onClick={() => newChat()}
+          className="flex items-center justify-center mt-6 p-2 bg-white rounded-2xl cursor-pointer hover:bg-gray-100"
+          onClick={newChat}
         >
-          <img src={assets.plus_icon} alt="" className="h-[1.5em]" />
-          {showSidebar ? <p className="ml-2 text-gray-400">New-chat</p> : null}
+          <img src={assets.plus_icon} alt="Plus" className="h-5" />
+          {showSidebar && (
+            <span className="ml-2 text-sm text-gray-600">New Chat</span>
+          )}
         </div>
-        <div className="recent mt-3 text-center cursor-pointer overflow-y-auto h-[40vh]">
-          <p className="text-black text-[0.8em] fixed backdrop-blur-lg ">
-            Recent
+
+        {/* Recent Prompts */}
+        <div className="mt-5 flex-1 overflow-y-auto">
+          <p className="text-sm font-semibold text-gray-500 mb-2 text-center">
+            {showSidebar ? "Recent" : ""}
           </p>
-        {prevPrompts.map((items, index) => {
-            return (
-              <div
-                onClick={() => loadPrompt(items)}
-                key={index}
-                className="recent-chat flex items-center p-2 cursor-pointer mt-2 hover:bg-gray-100 rounded-2xl"
-              >
-                <img src={assets.message_icon} alt="" className="w-[1.5em]" />
-                {showSidebar ? (
-                  <p className="text-[15px]">{items.slice(0, 18)}...</p>
-                ) : null}
-              </div>
-            );
-          })}
+          {prevPrompts.map((prompt, index) => (
+            <div
+              key={index}
+              onClick={() => loadPrompt(prompt)}
+              className="flex items-center gap-2 p-2 rounded-xl hover:bg-gray-100 cursor-pointer"
+            >
+              <img src={assets.message_icon} alt="Prompt" className="w-5" />
+              {showSidebar && (
+                <span className="text-[14px] text-gray-700 truncate w-[150px]">
+                  {prompt.length > 30 ? prompt.slice(0, 30) + "..." : prompt}
+                </span>
+              )}
+            </div>
+          ))}
         </div>
       </div>
-      <div className="bottom fixed bottom-9 h-[20vh] flex flex-col justify-center  align-center ">
-      
 
-        <div className="bottom-item grid grid-cols-2 items-center justify-center   hover:bg-gray-100 rounded-2xl p-2 cursor-pointer" onClick={handleMsg}>
-          <img src={assets.setting_icon} alt="" className="h-[1.5em]" />
-          {showSidebar ? <p className="text-sm">Settings</p> : null}
+      {/* Bottom Settings */}
+      <div className="pb-5">
+        <div
+          onClick={handleMsg}
+          className="flex items-center justify-center gap-2 p-2 rounded-xl hover:bg-gray-100 cursor-pointer"
+        >
+          <img src={assets.setting_icon} alt="Settings" className="w-5" />
+          {showSidebar && (
+            <span className="text-sm text-gray-600">Settings</span>
+          )}
         </div>
+
         {msg && (
-          <MessageBlock>You have to use the default <b>Settings</b>  only 🤖 </MessageBlock>
+          <MessageBlock>
+            You have to use the default <b>Settings</b> only 🤖
+          </MessageBlock>
         )}
       </div>
     </div>
