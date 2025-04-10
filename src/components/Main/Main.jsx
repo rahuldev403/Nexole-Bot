@@ -66,11 +66,11 @@ const Main = ({ showSidebar, setOpenSidebar }) => {
             {darkMode ? (
               <span role="img" aria-label="moon">
                 🌙
-              </span> // Moon icon for dark mode
+              </span> 
             ) : (
               <span role="img" aria-label="sun">
                 🌞
-              </span> // Sun icon for light mode
+              </span> 
             )}
           </button>
         </div>
@@ -146,7 +146,11 @@ const Main = ({ showSidebar, setOpenSidebar }) => {
                   alt=""
                   className="rounded-full w-[2em]"
                 />
-                <p>{userPrompt ? userPrompt : "Default Prompt"}</p>
+                {loading ? (
+                  "your prompt will appear here..."
+                ) : (
+                  <p>{userPrompt ? userPrompt : "Default Prompt"}</p>
+                )}
               </div>
               <div className="result-data mt-4 flex items-start gap-4">
                 <img
